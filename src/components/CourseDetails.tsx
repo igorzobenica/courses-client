@@ -12,10 +12,11 @@ import {
 import { Badge } from "./ui/Badge";
 import { dateString } from "@/lib/utils";
 import { Skeleton } from "./ui/Skeleton";
+import { Course } from "@/src/types";
 
 const CourseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [course, setCourse] = useState<any | null>(null);
+  const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

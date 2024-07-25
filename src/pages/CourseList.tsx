@@ -7,8 +7,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/Card";
-import { Button } from "./ui/Button";
+} from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Pagination,
@@ -18,13 +18,14 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "./ui/Pagination";
-import { Badge } from "./ui/Badge";
+} from "../components/ui/Pagination";
+import { Badge } from "../components/ui/Badge";
 import { dateString } from "@/lib/utils";
-import { Skeleton } from "./ui/Skeleton";
-import Filters from "./Filters";
+import { Skeleton } from "../components/ui/Skeleton";
+import Filters from "../components/Filters";
 import useDebounce from "@/hooks/useDebounce";
-import Layout from "./Layout";
+import Layout from "../components/Layout";
+import { Course } from "@/src/types";
 
 const highlightText = (text: string, query: string) => {
   if (!query) return text;
@@ -50,7 +51,7 @@ const getPaginationRange = (page: number, totalPages: number) => {
 };
 
 const CourseList: React.FC = () => {
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Toaster } from './ui/toaster';
+import { Toaster } from './ui/Toaster';
 
 interface LayoutProps {
   children: React.ReactNode;

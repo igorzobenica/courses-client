@@ -8,7 +8,7 @@ import App from './App.tsx'
 import './index.css'
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { CourseForm } from './pages/CourseForm.tsx';
-import CourseList from './components/CourseList.tsx';
+import CourseList from './pages/CourseList.tsx';
 
 const router = createBrowserRouter([
   {

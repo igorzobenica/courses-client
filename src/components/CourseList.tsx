@@ -23,6 +23,30 @@ import { Badge } from "./ui/Badge";
 import { dateString } from "@/lib/utils";
 import { Skeleton } from "./ui/Skeleton";
 import Filters from "./Filters";
+import useDebounce from "@/hooks/useDebounce";
+
+const highlightText = (text: string, query: string) => {
+  if (!query) return text;
+
+  const regex = new RegExp(`(${query})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) =>
+    regex.test(part) ? <mark key={index}>{part}</mark> : part
+  );
+};
+
+const getPaginationRange = (page: number, totalPages: number) => {
+  const start = Math.floor((page - 1) / 3) * 3 + 1;
+  const end = Math.min(start + 2, totalPages);
+  const range = [];
+
+  for (let i = start; i <= end; i++) {
+    range.push(i);
+  }
+
+  return range;
+};
 
 const CourseList: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
@@ -38,6 +62,8 @@ const CourseList: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const pageFromUrl = parseInt(params.get("page") || "1", 10);
@@ -48,7 +74,7 @@ const CourseList: React.FC = () => {
     const getCourses = async () => {
       try {
         const data = await fetchCourses({
-          searchQuery,
+          searchQuery: debouncedSearchQuery,
           page,
           category,
           location: courseLocation,
@@ -64,7 +90,7 @@ const CourseList: React.FC = () => {
     };
 
     getCourses();
-  }, [searchQuery, page, category, courseLocation, deliveryMethod]);
+  }, [debouncedSearchQuery, page, category, courseLocation, deliveryMethod]);
 
   const handlePageChange = (pageNumber: number) => {
     navigate(`/?page=${pageNumber}`);
@@ -76,19 +102,7 @@ const CourseList: React.FC = () => {
     setPage(1);
   };
 
-  const getPaginationRange = () => {
-    const start = Math.floor((page - 1) / 3) * 3 + 1;
-    const end = Math.min(start + 2, totalPages);
-    const range = [];
-
-    for (let i = start; i <= end; i++) {
-      range.push(i);
-    }
-
-    return range;
-  };
-
-  const paginationRange = getPaginationRange();
+  const paginationRange = getPaginationRange(page, totalPages);
 
   const showPaginationEllipsis = totalPages > 3 && page + 2 < totalPages;
 
@@ -116,12 +130,17 @@ const CourseList: React.FC = () => {
             </div>
           ))}
         {!loading &&
+          courses.length > 0 &&
           courses.map((course) => (
             <li key={course.id}>
               <Card className="">
                 <CardHeader>
-                  <CardTitle>{course.name}</CardTitle>
-                  <CardDescription>{course.instituteName}</CardDescription>
+                  <CardTitle>
+                    {highlightText(course.name, debouncedSearchQuery)}
+                  </CardTitle>
+                  <CardDescription>
+                    {highlightText(course.instituteName, debouncedSearchQuery)}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col gap-2">
@@ -142,9 +161,17 @@ const CourseList: React.FC = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
-                  <time className="text-xs font-medium">
-                    {dateString(course.startDate)}
-                  </time>
+                  <Badge
+                    variant={
+                      new Date(course.startDate) > new Date()
+                        ? "default"
+                        : "secondary"
+                    }
+                  >
+                    <time className="text-xs font-medium">
+                      {dateString(course.startDate)}
+                    </time>
+                  </Badge>
                   <Button asChild>
                     <Link to={`/courses/${course.id}`}>Select</Link>
                   </Button>
@@ -153,6 +180,12 @@ const CourseList: React.FC = () => {
             </li>
           ))}
       </ul>
+      {!loading && courses.length === 0 && (
+        <div className="flex flex-col justify-center items-center w-full h-24">
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">No courses found</h4>
+          <p className="text-sm">Please adjust the search</p>
+        </div>
+      )}
       <Pagination className="mt-4">
         <PaginationContent>
           <PaginationItem>

@@ -83,9 +83,15 @@ const CourseDetail: React.FC = () => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <time className="text-xs font-medium">
-          {dateString(course.startDate)}
-        </time>
+        <Badge
+          variant={
+            new Date(course.startDate) > new Date() ? "default" : "secondary"
+          }
+        >
+          <time className="text-xs font-medium">
+            {dateString(course.startDate)}
+          </time>
+        </Badge>
       </CardFooter>
     </Card>
   );

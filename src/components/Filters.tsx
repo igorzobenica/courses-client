@@ -16,6 +16,7 @@ import {
 import { Button } from "./ui/Button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -23,6 +24,7 @@ import {
   DialogTrigger,
 } from "./ui/Dialog";
 import { RadioGroup, RadioGroupItem } from "./ui/RadioGroup";
+import { DatePicker } from "./ui/DatePicker";
 
 const Filters = ({
   searchQuery,
@@ -35,6 +37,8 @@ const Filters = ({
   setDeliveryMethod,
   language,
   setLanguage,
+  startDate,
+  setStartDate,
 }: {
   searchQuery: string;
   onSearchChange: (v: string) => void;
@@ -46,6 +50,8 @@ const Filters = ({
   setDeliveryMethod: (location: string) => void;
   language?: string;
   setLanguage: (language?: string) => void;
+  startDate?: Date;
+  setStartDate: (startDate?: Date) => void;
 }) => {
   const [locations, setLocations] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -94,6 +100,7 @@ const Filters = ({
     setCourseLocation("");
     setDeliveryMethod("");
     setLanguage();
+    setStartDate();
   };
 
   return (
@@ -163,25 +170,11 @@ const Filters = ({
               <DialogHeader>
                 <DialogTitle>Additional filters</DialogTitle>
               </DialogHeader>
-              <Select onValueChange={setDeliveryMethod} value={deliveryMethod}>
-                <SelectTrigger>
-                  <SelectValue placeholder="All delivery methods" />
-                </SelectTrigger>
-                <SelectContent>
-                  {deliveryMethods.map((deliveryMethod) => (
-                    <SelectItem key={deliveryMethod} value={deliveryMethod}>
-                      {deliveryMethod}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <span className="text-lg font-semibold leading-none tracking-tight">
-                Language
-              </span>
+              <Label>Language</Label>
               <RadioGroup
                 defaultValue="all"
                 value={!language ? "all" : language}
-                onValueChange={selected => {
+                onValueChange={(selected) => {
                   if (selected === "all") {
                     setLanguage();
                   } else {
@@ -202,9 +195,21 @@ const Filters = ({
                   <Label htmlFor="swedish">Swedish</Label>
                 </div>
               </RadioGroup>
+              <Label>Filter by course start date</Label>
+              <DatePicker
+                date={startDate}
+                setDate={setStartDate}
+                placeholder="Leave blank for all time"
+              />
               <DialogFooter className="">
-                <Button variant="outline">Clear filters</Button>
-                <Button>Apply filters</Button>
+                <DialogClose asChild>
+                  <Button onClick={handleClearFilter} variant="outline">
+                    Clear filters
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button>Done</Button>
+                </DialogClose>
               </DialogFooter>
             </DialogContent>
           </Dialog>

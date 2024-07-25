@@ -57,6 +57,7 @@ const CourseList: React.FC = () => {
   const [deliveryMethod, setDeliveryMethod] = useState("");
   const [courseLocation, setCourseLocation] = useState("");
   const [language, setLanguage] = useState<string | undefined>();
+  const [startDate, setStartDate] = React.useState<Date>()
 
   const [loading, setLoading] = useState(true);
 
@@ -81,6 +82,7 @@ const CourseList: React.FC = () => {
           location: courseLocation,
           deliveryMethod,
           language,
+          startDate,
         });
         setCourses(data.courses);
         setTotalPages(data.totalPages);
@@ -92,7 +94,7 @@ const CourseList: React.FC = () => {
     };
 
     getCourses();
-  }, [debouncedSearchQuery, page, category, courseLocation, deliveryMethod, language]);
+  }, [debouncedSearchQuery, page, category, courseLocation, deliveryMethod, language, startDate]);
 
   const handlePageChange = (pageNumber: number) => {
     navigate(`/?page=${pageNumber}`);
@@ -121,6 +123,8 @@ const CourseList: React.FC = () => {
         setDeliveryMethod={setDeliveryMethod}
         language={language}
         setLanguage={setLanguage}
+        startDate={startDate}
+        setStartDate={setStartDate}
       />
       <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {loading &&

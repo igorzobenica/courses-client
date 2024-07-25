@@ -10,6 +10,7 @@ export const fetchCourses = async ({
   deliveryMethod,
   location,
   language,
+  startDate,
 }: {
   searchQuery: string;
   page: number;
@@ -18,6 +19,7 @@ export const fetchCourses = async ({
   deliveryMethod?: string;
   location?: string;
   language?: string;
+  startDate?: Date;
 }) => {
   try {
     const response = await axios.get(`${apiUrl}/courses`, {
@@ -29,6 +31,7 @@ export const fetchCourses = async ({
         deliveryMethod,
         location,
         language,
+        startDate,
       },
     });
     return response.data;

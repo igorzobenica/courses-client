@@ -15,11 +15,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <img className="h-auto w-40" src="/src/assets/logo.svg" alt="Logo" />
               </div>
             </div>
-            {/* <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <img className="h-auto w-52" src="src/assets/logo.svg" alt="Logo" />
-              </div>
-            </div> */}
           </div>
         </nav>
       </header>

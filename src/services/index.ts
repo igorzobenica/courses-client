@@ -80,3 +80,19 @@ export const fetchDeliveryMethods = async () => {
     throw error;
   }
 };
+
+export const submitStudentInfo = async (data: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  courseId: string;
+}) => {
+  try {
+    const response = await axios.post(`${apiUrl}/students`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error submitting student information:', error);
+    throw error;
+  }
+};

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Toaster } from './ui/toaster';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -22,9 +23,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           {children}
         </div>
+        <Toaster />
       </main>
-      <footer className="bg-primary text-white py-4 text-center">
-        © 2024 Your Company
+      <footer className="bg-primary text-white py-4 text-center text-sm">
+        © 2024 Keystone Education Group 
       </footer>
     </div>
   );

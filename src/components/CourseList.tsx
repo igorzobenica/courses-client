@@ -141,7 +141,7 @@ const CourseList: React.FC = () => {
           courses.length > 0 &&
           courses.map((course) => (
             <li key={course.id}>
-              <Card className="">
+              <Card className="flex flex-col h-full">
                 <CardHeader>
                   <CardTitle>
                     {highlightText(course.name, debouncedSearchQuery)}
@@ -150,7 +150,7 @@ const CourseList: React.FC = () => {
                     {highlightText(course.instituteName, debouncedSearchQuery)}
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex-1">
                   <div className="flex flex-col gap-2">
                     <div>
                       <span className="text-xs font-medium">Category: </span>

@@ -21,6 +21,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card";
+import { submitStudentInfo } from "@/services";
+import { useParams } from "react-router-dom";
+import { useToast } from "@/components/ui/use-toast";
+
+const phoneRegex =
+  /(?:([+]\d{1,4})[-.\s]?)?(?:[(](\d{1,3})[)][-.\s]?)?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/;
 
 const formSchema = z.object({
   firstName: z
@@ -46,10 +52,16 @@ const formSchema = z.object({
   phone: z
     .string()
     .min(1, { message: "Phone number is required" })
-    .max(15, { message: "Phone number is too long" }),
+    .max(15, { message: "Phone number is too long" })
+    .regex(phoneRegex, {
+      message: "Wrong phone number format. Please enter a correct phone number",
+    }),
 });
 
 export const CourseForm = () => {
+  const { id: courseId } = useParams<{ id: string }>();
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,10 +72,30 @@ export const CourseForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const data = { ...values, courseId: courseId ?? "" };
+      const response = await submitStudentInfo(data);
+      console.log("Form submitted successfully:", response);
+
+      // Store the data in local storage
+      localStorage.setItem("submittedForm", JSON.stringify(response));
+
+      toast({
+        title: "Form successfully submitted!",
+      });
+
+      // Clear the form
+      form.reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description:
+          "Please try again later, and if issue still persist please contact the support",
+      });
+    }
   };
 
   return (

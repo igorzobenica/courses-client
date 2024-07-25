@@ -7,9 +7,22 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
-import { fetchCategories, fetchLocations, fetchDeliveryMethods } from "@/services";
+} from "./ui/Select";
+import {
+  fetchCategories,
+  fetchLocations,
+  fetchDeliveryMethods,
+} from "@/services";
 import { Button } from "./ui/Button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/Dialog";
+import { RadioGroup, RadioGroupItem } from "./ui/RadioGroup";
 
 const Filters = ({
   searchQuery,
@@ -20,6 +33,8 @@ const Filters = ({
   setCourseLocation,
   deliveryMethod,
   setDeliveryMethod,
+  language,
+  setLanguage,
 }: {
   searchQuery: string;
   onSearchChange: (v: string) => void;
@@ -29,6 +44,8 @@ const Filters = ({
   setCourseLocation: (location: string) => void;
   deliveryMethod: string;
   setDeliveryMethod: (location: string) => void;
+  language?: string;
+  setLanguage: (language?: string) => void;
 }) => {
   const [locations, setLocations] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -76,70 +93,126 @@ const Filters = ({
     setCategory("");
     setCourseLocation("");
     setDeliveryMethod("");
+    setLanguage();
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_minmax(0,_1fr)__minmax(0,_1fr)_minmax(0,_1fr)_auto] gap-4 my-6 py-4 border-b sticky top-0 bg-white">
-      <div>
-        <Label htmlFor="search">Search courses</Label>
-        <Input
-          id="search"
-          type="text"
-          placeholder="Search courses..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_minmax(0,_1fr)__minmax(0,_1fr)_minmax(0,_1fr)_auto] gap-4 my-6 py-4 border-b sticky top-0 bg-white">
+        <div>
+          <Label htmlFor="search">Search courses</Label>
+          <Input
+            id="search"
+            type="text"
+            placeholder="Search courses..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+        </div>
+        <div>
+          <Label>Category</Label>
+          <Select onValueChange={setCategory} value={category}>
+            <SelectTrigger>
+              <SelectValue placeholder="All categories" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Location</Label>
+          <Select onValueChange={setCourseLocation} value={location}>
+            <SelectTrigger>
+              <SelectValue placeholder="All Locations" />
+            </SelectTrigger>
+            <SelectContent>
+              {locations.map((location) => (
+                <SelectItem key={location} value={location}>
+                  {location}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Delivery method</Label>
+          <Select onValueChange={setDeliveryMethod} value={deliveryMethod}>
+            <SelectTrigger>
+              <SelectValue placeholder="All delivery methods" />
+            </SelectTrigger>
+            <SelectContent>
+              {deliveryMethods.map((deliveryMethod) => (
+                <SelectItem key={deliveryMethod} value={deliveryMethod}>
+                  {deliveryMethod}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex justify-end items-end gap-4">
+          <Dialog>
+            <DialogTrigger>
+              <Button variant="outline">Additional</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Additional filters</DialogTitle>
+              </DialogHeader>
+              <Select onValueChange={setDeliveryMethod} value={deliveryMethod}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All delivery methods" />
+                </SelectTrigger>
+                <SelectContent>
+                  {deliveryMethods.map((deliveryMethod) => (
+                    <SelectItem key={deliveryMethod} value={deliveryMethod}>
+                      {deliveryMethod}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <span className="text-lg font-semibold leading-none tracking-tight">
+                Language
+              </span>
+              <RadioGroup
+                defaultValue="all"
+                value={!language ? "all" : language}
+                onValueChange={selected => {
+                  if (selected === "all") {
+                    setLanguage();
+                  } else {
+                    setLanguage(selected);
+                  }
+                }}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="all" id="all" />
+                  <Label htmlFor="all">All</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="english" id="english" />
+                  <Label htmlFor="english">English</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="swedish" id="swedish" />
+                  <Label htmlFor="swedish">Swedish</Label>
+                </div>
+              </RadioGroup>
+              <DialogFooter className="">
+                <Button variant="outline">Clear filters</Button>
+                <Button>Apply filters</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Button onClick={handleClearFilter}>Clear filters</Button>
+        </div>
       </div>
-      <div>
-        <Label>Category</Label>
-        <Select onValueChange={setCategory} value={category}>
-          <SelectTrigger>
-            <SelectValue placeholder="All categories" />
-          </SelectTrigger>
-          <SelectContent>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label>Location</Label>
-        <Select onValueChange={setCourseLocation} value={location}>
-          <SelectTrigger>
-            <SelectValue placeholder="All Locations" />
-          </SelectTrigger>
-          <SelectContent>
-            {locations.map((location) => (
-              <SelectItem key={location} value={location}>
-                {location}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label>Delivery method</Label>
-        <Select onValueChange={setDeliveryMethod} value={deliveryMethod}>
-          <SelectTrigger>
-            <SelectValue placeholder="All delivery methods" />
-          </SelectTrigger>
-          <SelectContent>
-            {deliveryMethods.map((deliveryMethod) => (
-              <SelectItem key={deliveryMethod} value={deliveryMethod}>
-                {deliveryMethod}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex justify-end items-end gap-4">
-        {/* <Button variant="outline" onClick={handleClearFilter}>Additional</Button> */}
-        <Button onClick={handleClearFilter}>Clear filters</Button>
-      </div>
-    </div>
+    </>
   );
 };
 

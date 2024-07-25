@@ -163,7 +163,7 @@ const Filters = ({
         </div>
         <div className="flex justify-end items-end gap-4">
           <Dialog>
-            <DialogTrigger>
+            <DialogTrigger asChild>
               <Button variant="outline">Additional</Button>
             </DialogTrigger>
             <DialogContent>

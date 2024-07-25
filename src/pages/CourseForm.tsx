@@ -24,6 +24,8 @@ import {
 import { submitStudentInfo } from "@/services";
 import { useParams } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 const phoneRegex =
   /(?:([+]\d{1,4})[-.\s]?)?(?:[(](\d{1,3})[)][-.\s]?)?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})/;
@@ -61,6 +63,7 @@ const formSchema = z.object({
 export const CourseForm = () => {
   const { id: courseId } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,6 +76,7 @@ export const CourseForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     try {
       const data = { ...values, courseId: courseId ?? "" };
       const response = await submitStudentInfo(data);
@@ -95,6 +99,8 @@ export const CourseForm = () => {
         description:
           "Please try again later, and if issue still persist please contact the support",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -179,7 +185,10 @@ export const CourseForm = () => {
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Submit</Button>
+                <Button type="submit">
+                  {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {!loading && 'Submit'}
+                </Button>
               </form>
             </Form>
           </CardContent>

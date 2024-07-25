@@ -8,12 +8,17 @@ import App from './App.tsx'
 import './index.css'
 import { NotFoundPage } from './pages/NotFoundPage.tsx';
 import { CourseForm } from './pages/CourseForm.tsx';
+import CourseList from './components/CourseList.tsx';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     errorElement: <NotFoundPage />,
+  },
+  {
+    path: "/courses",
+    element: <CourseList />,
   },
   {
     path: "/courses/:id",
